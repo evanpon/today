@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _addItemToList(String item) {
     setState(() {
-      var result = Firestore.instance.collection('Items').document().setData(
+      Firestore.instance.collection('Items').document().setData(
         {'title': item, 'completed': false, 'notes': '', 'date': DateTime.now()}
       );
       _items.add(item);
@@ -55,9 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void _displayAddItemScreen() {
     Navigator.of(context).push(MaterialPageRoute<Null>(
         builder: (BuildContext context) {
-          return _addItemScreen();
+          // return _addItemScreen();
+          return new AddItemScreen();
         },
         fullscreenDialog: true));
+  }
+
+  void _submitForm() {
+
   }
 
   Scaffold _addItemScreen() {
@@ -68,16 +73,22 @@ class _MyHomePageState extends State<MyHomePage> {
         style: TextStyle(color: Colors.white),
       ),
       onPressed: () {
+        _submitForm();
         Navigator.of(context).pop();
       },
     );
-    TextField textField = TextField(
+    TextFormField textField = TextFormField(
       decoration: InputDecoration(labelText: "Item"),
-      onSubmitted: (item) {
-        _addItemToList(item);
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Item can't be blank";
+        }
       },
+      // onSubmitted: (item) {
+      //   _addItemToList(item);
+      // },
     );
-    TextField textArea = TextField(
+    TextFormField textArea = TextFormField(
       decoration: InputDecoration(labelText: "Notes"),
       maxLines: null,
     );
@@ -85,7 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
     Column column = Column(
       children: <Widget>[textField, SizedBox(height: 20), textArea],
     );
-    Padding padding = Padding(padding: EdgeInsets.all(8), child: column);
+    Form form = Form(child: column);
+    Padding padding = Padding(padding: EdgeInsets.all(8), child: form);
     return Scaffold(
         appBar: AppBar(
           title: Text('Add item'),
@@ -195,12 +207,82 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+// class AddItemScreen extends StatefulWidget {
+
+// }
+
+class AddItemScreen extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final _item = Item();
+
+  void _submitForm() {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      Firestore.instance.collection('Items').document().setData(
+        {'title': _item.title, 
+         'completed': _item.completed, 
+         'notes': _item.notes, 
+         'date': _item.date}
+      );
+    }
+    print("submitting form");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    FlatButton saveButton = FlatButton(
+      child: Text(
+        "SAVE",
+        style: TextStyle(color: Colors.white),
+      ),
+      onPressed: () {
+        _submitForm();
+        Navigator.of(context).pop();
+      },
+    );
+    TextFormField textField = TextFormField(
+      decoration: InputDecoration(labelText: "Item"),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Item can't be blank";
+        }
+      },
+      onSaved: (String value) {
+        this._item.title = value;
+      },
+    );
+    TextFormField textArea = TextFormField(
+      decoration: InputDecoration(labelText: "Notes"),
+      maxLines: null,
+      onSaved: (String value) {
+        this._item.notes = value;
+      },
+    );
+
+    Column column = Column(
+      children: <Widget>[textField, SizedBox(height: 20), textArea],
+    );
+    Form form = Form(child: column, key: _formKey);
+    Padding padding = Padding(padding: EdgeInsets.all(8), child: form);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Add item'),
+          actions: <Widget>[saveButton],
+        ),
+        body: padding);
+  }
+}
 class Item {
-  final String title;
-  final String notes;
   final Timestamp date;
-  final bool completed;
-  final DocumentReference reference;
+  String title;
+  String notes;
+  bool completed;
+  DocumentReference reference;
+
+  Item() 
+    : date = Timestamp.fromDate(DateTime.now()),
+      completed = false;
+  
 
   Item.fromMap(Map<String, dynamic> map, {this.reference})
       : assert(map['title'] != null),
