@@ -45,6 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _addItemToList(String item) {
     setState(() {
+      var result = Firestore.instance.collection('Items').document().setData(
+        {'title': item, 'completed': false, 'notes': '', 'date': DateTime.now()}
+      );
       _items.add(item);
     });
   }
@@ -105,14 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.delete, color: Colors.white));
   }
 
-  // void _completeItem(index) {
-  //   final item = _items[index];
-  //   setState(() {
-  //     _items.removeAt(index);
-  //     counter += 1;
-  //   });
-  // }
-
   Widget _createList(BuildContext context) {
     final collection = Firestore.instance.collection('Items');
     DateTime now = new DateTime.now();
@@ -142,19 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _createCard(DocumentSnapshot data) {
     final x = data.data['date'];
-    // print("x: $x");
     DateTime y = x.toDate();
-    // print("y: $y");
 
-
-    // print("runtime type $x");
-    // final y = x.runtimeType;
-    // print("runtime type: $y");
-    // DateTime n = Timestamp.now().toDate();
-    // print("N: $n");
-    // Timestamp m = Timestamp.fromDate(n);
-    // final a = new DateTime.now().millisecondsSinceEpoch;
-    // print(" milliseconds: $a");
     Item item = Item.fromSnapshot(data);
     Card card = Card(
       child: ListTile(title: Text(item.title)),
@@ -162,7 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Dismissible(
         key: ObjectKey(item),
         onDismissed: (direction) {
-          // _completeItem();
           item.complete();
         },
         background: _stackBehindDismissal(),
