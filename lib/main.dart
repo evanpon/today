@@ -52,13 +52,18 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _displayAddItemScreen() {
+  void _displayDetailsScreen({Item item}) {
+    DetailsScreen screen;
+    if (item == null) {
+      screen = DetailsScreen();
+    } else {
+      screen = DetailsScreen.fromExisting(item);
+    }
     Navigator.of(context).push(MaterialPageRoute<Null>(
-        builder: (BuildContext context) {
-          // return _addItemScreen();
-          return new AddItemScreen();
-        },
-        fullscreenDialog: true));
+    builder: (BuildContext context) {
+      return screen;
+    },
+    fullscreenDialog: true));
   }
 
   String _getTodaysDate() {
@@ -108,7 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Item item = Item.fromSnapshot(data);
     Card card = Card(
-      child: ListTile(title: Text(item.title)),
+      child: InkWell(
+        child: ListTile(title: Text(item.title)),
+        onTap: (){_displayDetailsScreen(item: item);},
+      )
     );
     return Dismissible(
         key: ObjectKey(item),
@@ -153,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: _createList(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: _displayAddItemScreen,
+        onPressed: _displayDetailsScreen,
         tooltip: 'Add Item',
         child: Icon(Icons.add),
         backgroundColor: Colors.deepOrange,
@@ -162,21 +170,31 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class AddItemScreen extends StatelessWidget {
+class DetailsScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
-  final _item = Item();
+  final _item;
+
+  DetailsScreen() :
+    _item = Item();
+
+  DetailsScreen.fromExisting(Item item) :
+    _item = item;
 
   void _submitForm() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      Firestore.instance.collection('Items').document().setData(
-        {'title': _item.title, 
-         'completed': _item.completed, 
-         'notes': _item.notes, 
-         'date': _item.date}
-      );
+      Map<String, dynamic> data = {
+        'title': _item.title, 
+        'completed': _item.completed, 
+        'notes': _item.notes, 
+        'date': _item.date
+      };
+      if (_item.reference == null) {
+        Firestore.instance.collection('Items').document().setData(data);
+      } else {
+        _item.reference.updateData(data);
+      }
     }
-    print("submitting form");
   }
 
   @override
@@ -201,6 +219,7 @@ class AddItemScreen extends StatelessWidget {
       onSaved: (String value) {
         this._item.title = value;
       },
+      initialValue: _item.title,
     );
     TextFormField textArea = TextFormField(
       decoration: InputDecoration(labelText: "Notes"),
@@ -208,6 +227,7 @@ class AddItemScreen extends StatelessWidget {
       onSaved: (String value) {
         this._item.notes = value;
       },
+      initialValue: _item.notes
     );
 
     Column column = Column(
@@ -223,6 +243,7 @@ class AddItemScreen extends StatelessWidget {
         body: padding);
   }
 }
+
 class Item {
   final Timestamp date;
   String title;
