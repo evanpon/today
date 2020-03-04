@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>581457073704-tibq11d2o1ib0gnjdlbnjslfl734lk3p.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.581457073704-tibq11d2o1ib0gnjdlbnjslfl734lk3p</string>
+	<key>API_KEY</key>
+	<string>AIzaSyApi_IKi7Ye3azgJQO5u8tSYTHtUbaTETI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>581457073704</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.evanpon.today</string>
+	<key>PROJECT_ID</key>
+	<string>today-a7e8e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>today-a7e8e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:581457073704:ios:101a152d3fc0f567dc071d</string>
+	<key>DATABASE_URL</key>
+	<string>https://today-a7e8e.firebaseio.com</string>
+</dict>
+</plist>
