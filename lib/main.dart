@@ -61,51 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
         fullscreenDialog: true));
   }
 
-  void _submitForm() {
-
-  }
-
-  Scaffold _addItemScreen() {
-    // return Scaffold(appBar: AppBar(title: Text("hello"),),);
-    FlatButton saveButton = FlatButton(
-      child: Text(
-        "SAVE",
-        style: TextStyle(color: Colors.white),
-      ),
-      onPressed: () {
-        _submitForm();
-        Navigator.of(context).pop();
-      },
-    );
-    TextFormField textField = TextFormField(
-      decoration: InputDecoration(labelText: "Item"),
-      validator: (String value) {
-        if (value.isEmpty) {
-          return "Item can't be blank";
-        }
-      },
-      // onSubmitted: (item) {
-      //   _addItemToList(item);
-      // },
-    );
-    TextFormField textArea = TextFormField(
-      decoration: InputDecoration(labelText: "Notes"),
-      maxLines: null,
-    );
-
-    Column column = Column(
-      children: <Widget>[textField, SizedBox(height: 20), textArea],
-    );
-    Form form = Form(child: column);
-    Padding padding = Padding(padding: EdgeInsets.all(8), child: form);
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Add item'),
-          actions: <Widget>[saveButton],
-        ),
-        body: padding);
-  }
-
   String _getTodaysDate() {
     final now = new DateTime.now();
     final formatter = new DateFormat('MMMM dd');
@@ -206,10 +161,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-// class AddItemScreen extends StatefulWidget {
-
-// }
 
 class AddItemScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
